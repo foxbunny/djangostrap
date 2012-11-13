@@ -1,6 +1,5 @@
-# @@@ settings
+# Django settings for @@@ project
 
-# Django settings for ratecard project.
 import os
 import re
 from os.path import dirname, realpath, join

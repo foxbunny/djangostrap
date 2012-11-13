@@ -20,7 +20,7 @@ function err {
 function print_help {
 	echo '
 Usage:
-  djangostrap.sh [-mgdnsbh -c FILE] PATH NAME
+  djangostrap.sh [-mogdnsbh -c FILE] PATH NAME
 
   PATH - path to virtualenv
   NAME - project name
@@ -28,6 +28,7 @@ Usage:
 Options:
 
   -m    Install MySQL driver
+  -o    Do not install South (migrations)
   -g    Do not initialize Git repository
   -d    Skip development dependency installation
   -n    Skip virtualenv creation
@@ -39,6 +40,7 @@ Options:
 
 # Default settings
 USE_MYSQL=0
+USE_SOUTH=1
 USE_GIT=1
 USE_DEV=1
 USE_VENV=1
@@ -47,7 +49,7 @@ USE_PROJECT=1
 USE_BOOTSTRAP=0
 
 # Parse command line arguments
-while getopts mgdnsc:bh OPT; do
+while getopts mogdnsc:bh OPT; do
 	case "$OPT" in
 		h)
 			print_help
@@ -55,6 +57,9 @@ while getopts mgdnsc:bh OPT; do
 			;;
 		m)
 			USE_MYSQL=1
+			;;
+		o)
+			USE_SOUTH=0
 			;;
 		g)
 			USE_GIT=0
@@ -129,6 +134,11 @@ fi
 msg "Generating requirements.txt"
 echo 'https://www.djangoproject.com/download/1.5a1/tarball/#egg=django' >> requirements.txt
 
+if [ "$USE_SOUTH" == "1" ]
+then
+	echo "South==0.7.6" >> requirements.txt
+fi
+
 if [ "$USE_MYSQL" == "1" ]
 then
 	msg "Adding MySQL to requirements.txt"
@@ -191,9 +201,10 @@ then
 	then
 		echo 'if [ ! -e bin/activate ]; then' >> bootstrap.sh
 		echo "  virtualenv --no-site-packages ." >> bootstrap.sh
-		echo "  source ./bin/activate" >> bootstrap.sh
 		echo "fi" >> bootstrap.sh
 	fi
+
+	echo "source ./bin/activate || true" >> bootstrap.sh
 
 	echo 'pip install -r requirements.txt || { echo "Could not install dependencies. Aborting."; exit 1; }' >> bootstrap.sh
 

@@ -83,7 +83,7 @@ while getopts mgdnsc:bh OPT; do
 done
 
 # Let's first remember the path to template settings file
-if [ -e $SETTINGS_FILE ]
+if [ -e "$SETTINGS_FILE" ]
 then
 	SETTINGS_FILE=$(readlink -f "$SETTINGS_FILE")
 fi

@@ -89,10 +89,10 @@ TEMPLATE_CONTEXT_PROCESSORS =  (
     'django.core.context_processors.request',
 )
 
-ROOT_URLCONF = 'ratecard.urls'
+ROOT_URLCONF = '@@@.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'ratecard.wsgi.application'
+WSGI_APPLICATION = '@@@.wsgi.application'
 
 TEMPLATE_DIRS = (
     '%s/templates' % PROJECT_ROOT,

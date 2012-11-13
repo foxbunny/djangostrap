@@ -189,7 +189,7 @@ echo "share" >> .gitignore
 echo "include" >> .gitignore
 echo "bin" >> .gitignore
 echo "*.sublime-project" >> .gitignore
-echo "*.sublme-workspace" >> .gitignore
+echo "*.sublime-workspace" >> .gitignore
 
 if [ "$USE_BOOTSTRAP" == "1" ]
 then

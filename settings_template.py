@@ -43,15 +43,17 @@ USE_L10N = True
 
 USE_TZ = True
 
-MEDIA_ROOT = os.environ.get('MEDIA_ROOT', join(PROJECT_ROOT, '/uploads/'))
+MEDIA_ROOT = os.environ.get('MEDIA_ROOT', join(PROJECT_ROOT, 'uploads/'))
 
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = os.environ.get('STATIC_ROOT', join(PROJECT_ROOT, '/static/'))
+STATIC_ROOT = os.environ.get('STATIC_ROOT', join(PROJECT_ROOT, 'static/'))
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = ()
+STATICFILES_DIRS = (
+    join(dirname(PROJECT_ROOT), 'static'),
+)
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -133,6 +135,11 @@ LOGGING = {
         },
     }
 }
+
+# Test runner configuration
+TEST_RUNNER='discover_runner.DiscoverRunner'
+TEST_DISCOVER_TOP_LEVEL = dirname(dirname(__file__))
+TEST_DISCOVER_ROOT = join(TEST_DISCOVER_TOP_LEVEL, 'tests')
 
 # Email configuration
 if os.environ.get('EMAIL_HOST'):

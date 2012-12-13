@@ -29,6 +29,7 @@ Options:
 
   -m    Install MySQL driver
   -o    Do not install South (migrations)
+  -u    Do not install gunicorn (fast WSGI server)
   -g    Do not initialize Git repository
   -d    Skip development dependency installation
   -n    Skip virtualenv creation
@@ -47,6 +48,7 @@ USE_VENV=1
 USE_DYNAMIC=0
 USE_PROJECT=1
 USE_BOOTSTRAP=0
+USE_GUNICORN=1
 
 # Parse command line arguments
 while getopts mogdnsc:bh OPT; do
@@ -61,6 +63,9 @@ while getopts mogdnsc:bh OPT; do
 		o)
 			USE_SOUTH=0
 			;;
+    u)
+      USE_GUNICORN=0
+      ;;
 		g)
 			USE_GIT=0
 			;;
@@ -137,6 +142,12 @@ echo 'https://www.djangoproject.com/download/1.5a1/tarball/#egg=django' >> requi
 if [ "$USE_SOUTH" == "1" ]
 then
 	echo "South==0.7.6" >> requirements.txt
+fi
+
+if [ "$USE_GUNICORN" == "1" ]
+then
+  msg "Adding gunicorn to requirements.txt"
+  echo "gunicorn==0.1.5" >> requirements.txt
 fi
 
 if [ "$USE_MYSQL" == "1" ]

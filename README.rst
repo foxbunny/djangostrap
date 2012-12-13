@@ -31,6 +31,7 @@ testing your apps.
 Typically, the directory structure created looks like this::
 
     project.git/
+      |-.git/
       |-bin/
       |-lib/
       |-share/
@@ -38,8 +39,20 @@ Typically, the directory structure created looks like this::
       |-src/
       |   |-project_name/
       |   \-manage.py
+      |-.gitignore
       |-requirements.txt
       \-dev_requirements.txt
+
+Bootstrap script
+================
+
+If you use the ``-b`` switch, djangostrap will create the ``bootstrap.sh``
+script in your virtualenv directory. This script is used when you clone the
+project into a separate directory.
+
+Since the cloned project does not have a vritualenv, the bootstrap scrip will
+crate it and install any dependencies, and thus allow the clone to live in
+more-or-less identical environment as the original.
 
 Settings template
 =================

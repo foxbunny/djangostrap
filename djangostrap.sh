@@ -147,7 +147,7 @@ fi
 if [ "$USE_GUNICORN" == "1" ]
 then
   msg "Adding gunicorn to requirements.txt"
-  echo "gunicorn==0.1.5" >> requirements.txt
+  echo "gunicorn==0.16.1" >> requirements.txt
 fi
 
 if [ "$USE_MYSQL" == "1" ]

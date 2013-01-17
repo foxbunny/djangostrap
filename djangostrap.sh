@@ -137,7 +137,7 @@ then
 fi
 
 msg "Generating requirements.txt"
-echo 'https://www.djangoproject.com/download/1.5a1/tarball/#egg=django' >> requirements.txt
+echo 'https://www.djangoproject.com/download/1.5c1/tarball/#egg=django' >> requirements.txt
 
 if [ "$USE_SOUTH" == "1" ]
 then

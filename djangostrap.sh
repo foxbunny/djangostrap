@@ -165,11 +165,11 @@ then
 	echo "ipython>=0.13.1" >> dev_requirements.txt
 	echo "mock>=1.0.0" >> dev_requirements.txt
 	echo "coverage>=3.5.3" >> dev_requirements.txt
-  echo "django-webtest>=1.5.5" >> dev_requirements.txt
-  echo "django-discover-runner>=0.2.1" >> dev_requirements.txt
-  echo "webtest>=1.4.2" >> dev_requirements.txt
-  echo "pyquery>=1.2.2" >> dev_requirements.txt
-  echo "factory_boy>=1.2.0" >> dev_requirements.txt
+    echo "django-webtest>=1.5.5" >> dev_requirements.txt
+    echo "django-discover-runner>=0.2.1" >> dev_requirements.txt
+    echo "webtest>=1.4.2" >> dev_requirements.txt
+    echo "pyquery>=1.2.2" >> dev_requirements.txt
+    echo "factory_boy>=1.2.0" >> dev_requirements.txt
 
 	msg "Installing development tools"
 	pip install -r dev_requirements.txt || { err "ERROR: Failed to install development requirements. Aborting."; exit 4; }

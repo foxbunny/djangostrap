@@ -8,10 +8,20 @@ with Git scm.
 While the script is fairly flexible, it follows the routine that I use day to
 day, so it might not fit every use case scenario.
 
+Before running
+==============
+
+Before you run this script on distros like Ubuntu, please make sure build tools
+are installed, and if you want to install development dependencies as well
+(default), also install `libxml2-dev` package. So by default, you should first
+do the following::
+
+    sudo apt-get install build-essential libxml2-dev
+
 Basic usage
 ===========
 
-For complete instructions on usage, simply execute the script with no 
+For complete instructions on usage, simply execute the script with no
 arguments.
 
 Typically, djangostrap is used like this::
@@ -66,7 +76,7 @@ environment variables related to databases).
 
 I recommend you go through the ``settings_template.py`` file and see if it fits
 your needs. Note that inside settings template, the ``@@@`` represents a
-placeholder that will be replaced with the value of ``project_name`` (see 
+placeholder that will be replaced with the value of ``project_name`` (see
 `Basic usage`_).
 
 Reporting bugs

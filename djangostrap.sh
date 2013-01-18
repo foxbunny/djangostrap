@@ -165,7 +165,7 @@ then
 	echo "ipython>=0.13.1" >> dev_requirements.txt
 	echo "mock>=1.0.0" >> dev_requirements.txt
 	echo "coverage>=3.5.3" >> dev_requirements.txt
-  echo "django-webtest>=1.5.4" >> dev_requirements.txt
+  echo "django-webtest>=1.5.5" >> dev_requirements.txt
   echo "django-discover-runner>=0.2.1" >> dev_requirements.txt
   echo "webtest>=1.4.2" >> dev_requirements.txt
   echo "pyquery>=1.2.2" >> dev_requirements.txt

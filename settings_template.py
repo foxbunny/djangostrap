@@ -141,7 +141,7 @@ LOGGING = {
 }
 
 # Test runner configuration
-TEST_RUNNER ='discover_runner.DiscoverRunner'
+TEST_RUNNER = 'discover_runner.DiscoverRunner'
 TEST_DISCOVER_TOP_LEVEL = dirname(dirname(__file__))
 TEST_DISCOVER_ROOT = join(TEST_DISCOVER_TOP_LEVEL, 'tests')
 

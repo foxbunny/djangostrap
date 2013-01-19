@@ -132,8 +132,15 @@ fi
 
 # Create the project root
 
+msg "Creating project directory in $PROJ_PATH"
 mkdir -p $PROJ_PATH
 cd $PROJ_PATH
+
+msg "Generating empty README.rst"
+touch README.rst
+
+msg "Creating documentation directory"
+mkdir doc
 
 msg "Generating requirements.txt"
 echo 'https://www.djangoproject.com/download/1.5c1/tarball/#egg=django' >> requirements.txt

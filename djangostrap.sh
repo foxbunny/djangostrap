@@ -189,9 +189,9 @@ fi
 
 if [ "$USE_PROJECT" == "1" ]
 then
-    mkdir -p "$PROJ_PATH/src"
+    mkdir src || { err "ERROR: Failed to crate source directory at $PROJ_PATH/src"; exit 5; }
 	msg "Creating new Django project $PROJ_NAME in $PROJ_PATH/src"
-	django-admin.py startproject $PROJ_NAME "$PROJ_PATH/src" || { err "ERROR: Could not start project. Aborting."; exit 5; }
+	django-admin.py startproject "$PROJ_NAME" src || { err "ERROR: Could not start project. Aborting."; exit 5; }
 fi
 
 if [ "$USE_DYNAMIC" == "1" ]

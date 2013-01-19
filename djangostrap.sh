@@ -28,6 +28,7 @@ Usage:
 Options:
 
   -m    Install MySQL driver
+  -p    Install Posgres driver
   -o    Do not install South (migrations)
   -u    Do not install gunicorn (fast WSGI server)
   -g    Do not initialize Git repository
@@ -35,19 +36,18 @@ Options:
   -n    Skip virtualenv creation
   -s    Skip project creation
   -c    Use custom settings file
-  -b    Add bootstrap.sh
   -h    Show usage (this message)'
 }
 
 # Default settings
 USE_MYSQL=0
+USE_POSTGRES=0
 USE_SOUTH=1
 USE_GIT=1
 USE_DEV=1
 USE_VENV=1
 USE_DYNAMIC=0
 USE_PROJECT=1
-USE_BOOTSTRAP=0
 USE_GUNICORN=1
 
 # Parse command line arguments
@@ -82,9 +82,6 @@ while getopts mogdnsc:bh OPT; do
 			USE_DYNAMIC=1
 			SETTINGS_FILE=$OPTARG
 			;;
-		b)
-			USE_BOOTSTRAP=1
-			;;
 		\?)
 			print_help
 			exit 1
@@ -95,6 +92,7 @@ done
 # Let's first remember the path to template settings file
 if [ -e "$SETTINGS_FILE" ]
 then
+    USE_DYNAMIC=1
 	SETTINGS_FILE=$(readlink -f "$SETTINGS_FILE")
 fi
 
@@ -109,32 +107,33 @@ then
 	exit 1
 fi
 
-VENV_PATH=$1
+PROJ_PATH=$1
 PROJ_NAME=$2
 
-if [ -e $VENV_PATH ]
+if [ ! -d "$WORKON_HOME" ]
 then
-	err "$VENV_PATH already exists. Aborting."
+    err "The environment variable "'$WORKON_HOME'" is not defined"
+    exit 1;
+fi
+
+if [ -e $PROJ_PATH ]
+then
+	err "$PROJ_PATH already exists. Aborting."
 	exit 1;
 fi
 
-# Create the virtualenv/git root directory
-mkdir -p $VENV_PATH
-
 if [ "$USE_VENV" == "1" ]
 then
-	msg "Creating virtualenv in $VENV_PATH"
-	which virtualenv >> /dev/null || { err "ERROR: No virtualenv command. Aborting."; exit 2; }
-	virtualenv --no-site-packages $VENV_PATH
+	msg "Creating virtualenv $PROJ_NAME"
+    which virtualenv >> /dev/null || { err "ERROR: No virtualenvwrapper. Aborting."; exit 2; }
+	virtualenv --no-site-packages "$WORKON_HOME/$PROJ_NAME"
+    source "$WORKON_HOME/$PROJ_NAME/bin/activate"
 fi
 
-cd $VENV_PATH
+# Create the project root
 
-if [ "$USE_VENV" == "1" ]
-then
-	msg "Enabling virtualenv environment"
-	source ./bin/activate
-fi
+mkdir -p $PROJ_PATH
+cd $PROJ_PATH
 
 msg "Generating requirements.txt"
 echo 'https://www.djangoproject.com/download/1.5c1/tarball/#egg=django' >> requirements.txt
@@ -156,8 +155,14 @@ then
 	echo "MySQL-python==1.2.4c1" >> requirements.txt
 fi
 
-msg "Installing runtime requirements to $VENV_PATH"
-pip install -r requirements.txt || { err "ERROR: Failed to install Django. Aborting."; exit 3; }
+if [ "$USE_POSTGRES" == "1" ]
+then
+    msg "Adding Posgres to requirements.txt"
+    echo "psycopg2==2.4.6" >> requirements.txt
+fi
+
+msg "Installing runtime requirements"
+pip install -r requirements.txt || { err "ERROR: Failed to install dependecies. Aborting."; exit 3; }
 
 if [ "$USE_DEV" == "1" ]
 then
@@ -177,9 +182,9 @@ fi
 
 if [ "$USE_PROJECT" == "1" ]
 then
-	msg "Creating new Django project $PROJ_NAME in $VENV_PATH/src"
-	django-admin.py startproject $PROJ_NAME || { err "ERROR: Could not start project. Aborting."; exit 5; }
-	mv $PROJ_NAME src
+    mkdir -p "$PROJ_PATH/src"
+	msg "Creating new Django project $PROJ_NAME in $PROJ_PATH/src"
+	django-admin.py startproject $PROJ_NAME "$PROJ_PATH/src" || { err "ERROR: Could not start project. Aborting."; exit 5; }
 fi
 
 if [ "$USE_DYNAMIC" == "1" ]
@@ -200,37 +205,6 @@ echo "*.swp" >> .gitignore
 echo "*.swo" >> .gitignore
 echo "*~" >> .gitignore
 echo "*.db" >> .gitignore
-echo "lib" >> .gitignore
-echo "share" >> .gitignore
-echo "include" >> .gitignore
-echo "bin" >> .gitignore
-echo "*.sublime-project" >> .gitignore
-echo "*.sublime-workspace" >> .gitignore
-
-if [ "$USE_BOOTSTRAP" == "1" ]
-then
-	msg "Creating bootstrap script"
-	echo "#!/bin/bash" > bootstrap.sh
-	echo "set -e" >> bootstrap.sh
-
-	if [ "$USE_VENV" == "1" ]
-	then
-		echo 'if [ ! -e bin/activate ]; then' >> bootstrap.sh
-		echo "  virtualenv --no-site-packages ." >> bootstrap.sh
-		echo "fi" >> bootstrap.sh
-	fi
-
-	echo "source ./bin/activate || true" >> bootstrap.sh
-
-	echo 'pip install -r requirements.txt || { echo "Could not install dependencies. Aborting."; exit 1; }' >> bootstrap.sh
-
-	echo 'if [ -e "dev_dependencies.txt" ]; then' >> bootstrap.sh
-	echo '  pip install -r dev_dependencies.txt || { echo "Could not install dev dependencies. Aborting."; exit 2; }' >> bootstrap.sh
-	echo 'fi' >> bootstrap.sh
-
-	echo "echo Bootstrap finished. You can activate your virtualenv now." >> bootstrap.sh
-	chmod u+x bootstrap.sh
-fi
 
 if [ "$USE_GIT" == "1" ]
 then
@@ -253,8 +227,7 @@ then
 	echo "You have to enable the virtualenv when you want to develop."
 	echo "Simly do this:"
 	echo
-	echo "    cd $VENV_PATH/"
-	echo "    source ./bin/activate"
+	echo "    workon $PROJ_NAME"
 	echo
 	echo "To deactivate the virtualenv, just type:"
 	echo
